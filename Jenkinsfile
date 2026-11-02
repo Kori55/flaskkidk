@@ -2,21 +2,14 @@ pipeline {
     agent any
 
     stages {
-        stage('Dependency Check') {
+        stage('SonarQube Analysis') {
             steps {
-                bat 'if not exist reports mkdir reports'
+                script {
+                    def scannerHome = tool 'SonarScanner'
 
-                dependencyCheck(
-                    odcInstallation: 'Dependency-Check',
-                    additionalArguments: '--scan . --format HTML --format XML --out reports'
-                )
-            }
-
-            post {
-                always {
-                    dependencyCheckPublisher(
-                        pattern: 'reports/dependency-check-report.xml'
-                    )
+                    withSonarQubeEnv('SonarQube-Server') {
+                        bat "\"${scannerHome}\\bin\\sonar-scanner.bat\" -Dsonar.projectKey=flaskkidk -Dsonar.sources=."
+                    }
                 }
             }
         }
