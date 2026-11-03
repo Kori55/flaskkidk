@@ -41,5 +41,19 @@ pipeline {
                 }
             }
         }
-    }
+
+	stage('Deploy Flask') {
+		steps {
+			bat '''
+				docker rm -f flask-app 2>NUL
+            			docker run -d --name flask-app ^
+                		-p 5000:5000 ^
+                		-v "%CD%:/app" ^
+                		-w /app ^
+                		python:3.12-slim ^
+                		sh -c "pip install -r requirements.txt && python t.py"
+		        '''
+			}
+		}
+	}
 }
