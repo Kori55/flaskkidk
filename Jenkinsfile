@@ -60,10 +60,13 @@ pipeline {
         }
 
 
+
         stage('OWASP ZAP Scan') {
             steps {
                 bat '''
-                    docker run --rm ^
+                    set "DOCKER=C:\\Users\\yoloy\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe"
+
+                    "%DOCKER%" run --rm ^
                         --network host ^
                         ghcr.io/zaproxy/zaproxy:stable ^
                         zap-baseline.py ^
@@ -73,5 +76,6 @@ pipeline {
                 '''
             }
         }
+
     }
 }
