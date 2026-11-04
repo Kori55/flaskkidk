@@ -15,13 +15,14 @@ pipeline {
                 }
             }
 
-            post {
-                always {
-                    dependencyCheckPublisher(
-                        pattern: 'reports/dependency-check-report.xml'
-                    )
-                }
-            }
+		post {
+    			always {
+        			dependencyCheckPublisher(
+            				pattern: 'reports/dependency-check-report.xml',
+            				skipNoReportFiles: true
+        			)
+    			}
+		}
         }
 
         stage('SonarQube Analysis') {
