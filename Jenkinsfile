@@ -58,5 +58,20 @@ pipeline {
                 '''
             }
         }
+
+
+        stage('OWASP ZAP Scan') {
+            steps {
+                bat '''
+                    docker run --rm ^
+                        --network host ^
+                        ghcr.io/zaproxy/zaproxy:stable ^
+                        zap-baseline.py ^
+                        -t http://host.docker.internal:5000 ^
+                        -r zap-report.html ^
+                        -I
+                '''
+            }
+        }
     }
 }
