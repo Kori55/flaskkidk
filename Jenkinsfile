@@ -42,22 +42,21 @@ pipeline {
             }
         }
 
+        stage('Deploy Flask') {
+            steps {
+                bat '''
+                    set "DOCKER=C:\\Users\\yoloy\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe"
 
-stage('Deploy Flask') {
-    steps {
-        bat '''
-            set "DOCKER=C:\\Users\\yoloy\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe"
+                    "%DOCKER%" rm -f flask-app 2>NUL
 
-            "%DOCKER%" rm -f flask-app 2>NUL
-
-            "%DOCKER%" run -d --name flask-app ^
-                -p 5000:5000 ^
-                -v "%CD%:/app" ^
-                -w /app ^
-                python:3.12-slim ^
-                sh -c "pip install -r requirements.txt && python t.py"
-        '''
+                    "%DOCKER%" run -d --name flask-app ^
+                        -p 5000:5000 ^
+                        -v "%CD%:/app" ^
+                        -w /app ^
+                        python:3.12-slim ^
+                        sh -c "pip install -r requirements.txt && python t.py"
+                '''
+            }
+        }
     }
-}
-
 }
