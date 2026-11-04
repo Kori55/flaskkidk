@@ -59,23 +59,22 @@ pipeline {
             }
         }
 
-
-
-        stage('OWASP ZAP Scan') {
-            steps {
-                bat '''
-                    set "DOCKER=C:\\Users\\yoloy\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe"
-
-                    "%DOCKER%" run --rm ^
-                        --network host ^
-                        ghcr.io/zaproxy/zaproxy:stable ^
-                        zap-baseline.py ^
-                        -t http://host.docker.internal:5000 ^
-                        -r zap-report.html ^
-                        -I
-                '''
-            }
-        }
+	stage('OWASP ZAP Scan') {
+    		steps {
+        		bat '''
+            		set "DOCKER=C:\\Users\\yoloy\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe"
+			
+            		"%DOCKER%" run --rm ^
+                	-v "%CD%:/zap/wrk/:rw" ^
+                	-w /zap/wrk/ ^
+                	ghcr.io/zaproxy/zaproxy:stable ^
+                	zap-baseline.py ^
+                	-t http://host.docker.internal:5000/hello?name=ZAP ^
+                	-r zap-report.html ^
+                	-I
+        		'''
+    		}
+	}
 
     }
 }
