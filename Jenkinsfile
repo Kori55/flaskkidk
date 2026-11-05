@@ -3,18 +3,22 @@ pipeline {
     agent any
 
     stages {
+
 stage('Dependency Check') {
     steps {
-        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-            bat 'if not exist reports mkdir reports'
+        withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                bat 'if not exist reports mkdir reports'
 
-            dependencyCheck(
-                odcInstallation: 'Dependency-Check',
-                additionalArguments: '--scan . --format HTML --format XML --out reports'
-            )
+                dependencyCheck(
+                    odcInstallation: 'Dependency-Check',
+                    additionalArguments: "--scan . --format HTML --format XML --out reports --nvdApiKey ${NVD_API_KEY}"
+                )
+            }
         }
     }
 }
+
 
         stage('SonarQube Analysis') {
             steps {
