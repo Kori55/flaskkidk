@@ -12,8 +12,7 @@ pipeline {
 	stage('Test') {
 		steps {
 			bat '''
-			"C:\\Users\\yoloy\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" --version
-			"C:\\Users\\yoloy\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" -m pipenv --version
+			"C:\\Users\\yoloy\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" -m pipenv run pytest
 			'''
 		}
 	}
@@ -24,15 +23,15 @@ pipeline {
             }
         }
 
-        stage('Dependency Management') {
-            steps {
-                bat '''
-                    py -m pipenv install
-                    py -m pipenv update
-                    py -m pipenv graph
-                '''
-            }
-        }
+	stage('Dependency Management') {
+		steps {
+			bat '''
+			"C:\\Users\\yoloy\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" -m pipenv install
+			"C:\\Users\\yoloy\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" -m pipenv update
+			"C:\\Users\\yoloy\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" -m pipenv graph
+			'''
+		}
+	}
 
         stage('Deploy') {
             steps {
