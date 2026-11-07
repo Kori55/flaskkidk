@@ -6,15 +6,14 @@ pipeline {
 
 stage('Dependency Check') {
     steps {
-        withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
-            catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                bat 'if not exist reports mkdir reports'
+        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+            bat 'if not exist reports mkdir reports'
 
-                dependencyCheck(
-                    odcInstallation: 'Dependency-Check',
-                    additionalArguments: "--scan . --format HTML --format XML --out reports --nvdApiKey ${NVD_API_KEY}"
-                )
-            }
+            dependencyCheck(
+                odcInstallation: 'Dependency-Check',
+                nvdCredentialsId: 'nvd-api-key',
+                additionalArguments: '--scan . --format HTML --format XML --out reports'
+            )
         }
     }
 }
