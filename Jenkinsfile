@@ -24,9 +24,9 @@ pipeline {
         stage('Dependency Management') {
             steps {
                 bat '''
-                    pipenv install
-                    pipenv update
-                    pipenv graph
+                    py -m pipenv install
+                    py -m pipenv update
+                    py -m pipenv graph
                 '''
             }
         }
