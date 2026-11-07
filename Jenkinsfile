@@ -12,6 +12,7 @@ pipeline {
 	stage('Test') {
 		steps {
 			bat '''
+			chcp 65001 > nul
 			set PYTHONUTF8=1
 			"C:\\Users\\yoloy\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" -m pipenv run pytest
 			'''
@@ -27,6 +28,7 @@ pipeline {
 	stage('Dependency Management') {
 		steps {
 			bat '''
+			chcp 65001 > nul
 			set PYTHONUTF8=1
 			"C:\\Users\\yoloy\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" -m pipenv install --dev pytest
 			"C:\\Users\\yoloy\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" -m pipenv update
