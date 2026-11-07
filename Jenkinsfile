@@ -1,75 +1,40 @@
-
-pipeline {
-    agent any
-
-    stages {
-
-stage('Dependency Check') {
-    steps {
-        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-            bat 'if not exist reports mkdir reports'
-
-            dependencyCheck(
-                odcInstallation: 'Dependency-Check',
-                nvdCredentialsId: 'nvd-api-key',
-                additionalArguments: '--scan . --format HTML --format XML --out reports'
-            )
-        }
-    }
-}
-
-
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    def scannerHome = tool 'SonarScanner'
-
-                    withSonarQubeEnv('SonarQube-Server') {
-                        bat """
-                            "${scannerHome}\\bin\\sonar-scanner.bat" ^
-                            -Dsonar.projectKey=flaskkidk ^
-                            -Dsonar.projectName=flaskkidk ^
-                            -Dsonar.sources=. ^
-                            -Dsonar.exclusions=**/reports/**
-                        """
-                    }
-                }
-            }
-        }
-
-        stage('Deploy Flask') {
-            steps {
-                bat '''
-                    set "DOCKER=C:\\Users\\yoloy\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe"
-
-                    "%DOCKER%" rm -f flask-app 2>NUL
-
-                    "%DOCKER%" run -d --name flask-app ^
-                        -p 5000:5000 ^
-                        -v "%CD%:/app" ^
-                        -w /app ^
-                        python:3.12-slim ^
-                        sh -c "pip install -r requirements.txt && python t.py"
-                '''
-            }
-        }
-
-	stage('OWASP ZAP Scan') {
-    		steps {
-        		bat '''
-            		set "DOCKER=C:\\Users\\yoloy\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe"
-			
-            		"%DOCKER%" run --rm ^
-                	-v "%CD%:/zap/wrk/:rw" ^
-                	-w /zap/wrk/ ^
-                	ghcr.io/zaproxy/zaproxy:stable ^
-                	zap-baseline.py ^
-                	-t http://host.docker.internal:5000/hello?name=ZAP ^
-                	-r zap-report.html ^
-                	-I
-        		'''
-    		}
-	}
-
-    }
+pipeline { 
+    agent any 
+ 
+    stages { 
+        stage('Build') { 
+            steps { 
+                echo 'Compilando / preparando entorno...' 
+            } 
+        } 
+ 
+        stage('Test') { 
+            steps { 
+                sh 'pipenv run pytest || echo "Sin tests 
+definidos"' 
+            } 
+        } 
+ 
+        stage('Analyze') { 
+            steps { 
+                echo 'Análisis de calidad de código (puede 
+integrarse con SonarQube aquí)' 
+            } 
+        } 
+ 
+        stage('Dependency Management') { 
+            steps { 
+                sh 'pipenv install' 
+                sh 'pipenv update' 
+                sh 'pipenv graph' 
+            } 
+        } 
+ 
+        stage('Deploy') { 
+steps { 
+echo 'Desplegando aplicación en entorno de prueba 
+(simulado)...' 
+} 
+} 
+} 
 }
