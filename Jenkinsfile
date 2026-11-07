@@ -9,11 +9,17 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                bat 'pipenv run pytest'
-            }
-        }
+	stage('Test') {
+		steps {
+			bat '''
+			whoami
+			where py
+			py --version
+			py -m pipenv --version
+			py -m pipenv run pytest
+			'''
+		}
+	}
 
         stage('Analyze') {
             steps {
